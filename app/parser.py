@@ -1,5 +1,4 @@
 from constants import REPOS_BASE_PATH
-import fnmatch
 import os
 import redis
 import re
@@ -9,10 +8,9 @@ store.delete('lines')
 
 vimrc_paths = []
 for root, dirnames, filenames in os.walk(REPOS_BASE_PATH):
-    for filename in fnmatch.filter(filenames, 'vimrc'):
+    for filename in filenames:
         path = os.path.join(root, filename)
-        if not os.path.islink(path):
-            vimrc_paths.append(path)
+        vimrc_paths.append(path)
 
 
 def norm(line):
@@ -28,7 +26,7 @@ def norm(line):
 
     # Strip comments
     line = re.sub(r'^\s*".*$', '', line)
-    line = re.sub(r'^(Plugin|Plug|Vundle)', 'Plugin', line)
+    line = re.sub(r'^(Plugin|Plug|Vundle|Bundle|NeoBundle)', 'Plugin', line)
 
     # Strip whitespace
     line = line.strip()
@@ -66,5 +64,6 @@ for vimrc_path in vimrc_paths:
             if len(line):
                 store.zincrby('lines', line)
 
-for line, score in store.zrange('lines', 0, 150, desc=True, withscores=True):
-    print "%s: %s" % (score, line)
+for line, score in store.zrange('lines', 0, 1500, desc=True, withscores=True):
+    print line
+    #print "%s: %s" % (score, line)

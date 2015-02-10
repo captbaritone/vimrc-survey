@@ -8,7 +8,7 @@ gh = GitHub()
 search_results = gh.search_repositories("dotfiles")
 
 import itertools
-for r in itertools.islice(search_results, 0, 200):
+for r in search_results:
 
     repo_path = REPOS_BASE_PATH + r.repository.full_name
     git_url = r.repository.clone_url
